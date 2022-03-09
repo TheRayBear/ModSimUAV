@@ -1,4 +1,4 @@
-#Model and Simulation HW 7 - UAV  - Ryan Raber
+#Model and Simulation HW 7 - UAV
 
 # Import libraries
 
