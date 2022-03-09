@@ -291,7 +291,7 @@ def DrawPlane(pos_ned, phi, theta, psi, throttle_pos):
     
     
     # Create Mesh from STL File
-    planeMesh = mesh.Mesh.from_file("C:\\Users\\Ryan\\OneDrive - University of Cincinnati\\Model and Sim\\delorean.stl") # Include STL file name here
+    planeMesh = mesh.Mesh.from_file("delorean.stl") # Include STL file name here
     planeMesh.rotate_using_matrix(R)
     planeMesh.x += simScaleFactor * (pos_ned[1] + eastOffset)  
     planeMesh.y += simScaleFactor * (pos_ned[0] + northOffset)
