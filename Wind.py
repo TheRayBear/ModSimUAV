@@ -4,13 +4,12 @@ from control.matlab import *
 from RotationalMatricies import *
 
 
-def wind(phi,theta, psi,Va, dt):
+def wind(phi,theta,psi,Va,dt):
     # steady state wind in inertial frame
  
     wn=0
     we=0
     wd=0
-    
     
     # gust params
     Lu=200
@@ -59,3 +58,18 @@ def wind(phi,theta, psi,Va, dt):
     Vw=Wg_b+Ws_b
     
     return Vw
+
+def air_data(states, dt, Va0):
+    #Steady State Wind in Inertial Frame
+    u=states[3]
+    v=states[4]
+    w=states[5]
+    phi=states[6]
+    theta=states[7]
+    psi=states[8]
+    Vw=wind(phi, theta, psi, Va0, dt)
+    Va_b=np.array([u-Vw[0], v-Vw[1], w-Vw[2]])
+    Va=np.sqrt(Va_b[0]**2+Va_b[1]**2+Va_b[2]**2)
+    alpha=np.arctan2(Va_b[2], Va_b[0])
+    beta=np.arcsin(Va_b[1]/Va)
+    return (Va, alpha, beta, Vw)
