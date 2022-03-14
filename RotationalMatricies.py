@@ -4,8 +4,8 @@ import numpy as np
 # Rotation Matrix: Body Frame to Inertial Frame
 def rotMat_body2inertial(phi, theta, psi): #Rotates Body from body frame to vehical frame
     R_b_w = np.array([[np.cos(theta)*np.cos(psi), np.sin(phi)*np.sin(theta)*np.cos(psi)-np.cos(phi)*np.sin(psi), np.cos(phi)*np.sin(theta)*np.cos(psi)+np.sin(phi)*np.sin(psi)],
-                         [np.cos(theta)*np.sin(psi), np.sin(phi)*np.sin(theta)*np.sin(psi)+np.cos(phi)*np.cos(psi), np.cos(phi)*np.sin(theta)*np.sin(psi)-np.sin(phi)*np.cos(psi)],
-                         [-np.sin(theta), np.sin(phi)*np.cos(theta), np.cos(phi)*np.cos(theta)]])
+                      [np.cos(theta)*np.sin(psi), np.sin(phi)*np.sin(theta)*np.sin(psi)+np.cos(phi)*np.cos(psi), np.cos(phi)*np.sin(theta)*np.sin(psi)-np.sin(phi)*np.cos(psi)],
+                      [-np.sin(theta), np.sin(phi)*np.cos(theta), np.cos(phi)*np.cos(theta)]])
     return R_b_w
 
 # Rotation Matrix: Body Frame to Stability Frame
@@ -35,7 +35,7 @@ def rotMat_body2inertial_Wind(phi, theta, psi):
                          [-np.sin(theta), np.sin(phi)*np.cos(theta), np.cos(phi)*np.cos(theta)]])
     return R_b_w_wind
 
-def rotMat_body2inertial_Plane(phi, theta, psi): #Rotates Body from body frame to vehical frame
+def rotMat_body2inertial_STL(phi, theta, psi): #Rotates Body from body frame to vehical frame, inverted for STL files
     R_b_w_plane = np.array([[np.cos(-theta) * np.cos(psi), np.sin(-phi) * np.sin(-theta) * np.cos(psi) - np.cos(-phi) * np.sin(psi), np.cos(-phi) * np.sin(-theta) * np.cos(psi) + np.sin(-phi) * np.sin(psi)],
                             [np.cos(-theta) * np.sin(psi), np.sin(-phi) * np.sin(-theta) * np.sin(psi) + np.cos(-phi) * np.cos(psi), np.cos(-phi) * np.sin(-theta) * np.sin(psi) - np.sin(-phi) * np.cos(psi)],
                             [-np.sin(-theta), np.sin(-phi) * np.cos(-theta), np.cos(-phi) * np.cos(-theta)]])
