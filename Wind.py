@@ -59,7 +59,7 @@ def wind(phi,theta,psi,Va,dt):
     
     return Vw
 
-def air_data(states, dt, Va0):
+def air_data(states, dt):
     #Steady State Wind in Inertial Frame
     u=states[3]
     v=states[4]
@@ -67,6 +67,7 @@ def air_data(states, dt, Va0):
     phi=states[6]
     theta=states[7]
     psi=states[8]
+    Va0 = np.sqrt(u**2 + v**2 + w**2)
     Vw=wind(phi, theta, psi, Va0, dt)
     Va_b=np.array([u-Vw[0], v-Vw[1], w-Vw[2]])
     Va=np.sqrt(Va_b[0]**2+Va_b[1]**2+Va_b[2]**2)

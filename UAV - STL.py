@@ -25,12 +25,19 @@ from RotationalMatricies import *
 from Draw_Plots import *
 from Wind import *
 from Dynamics import *
+from Trim_Conditions import *
 
 #Initial Conditions
-Va0=35 #Meters
+Va0=30 #Meters
 Initial_Altitude=600 #meters
 T = 20
 dt = 0.017
+
+#Desired Flight Conditions
+Va=35
+Y=0
+R=9999999999999
+
 
 #Tables for Final Graphs
 graph_data=[]
@@ -44,7 +51,7 @@ def Reset():
     user_input=[0,0,0,0]
 
 
-
+'''
 #Controller Input Backend
 class XboxController(object):
     MAX_TRIG_VAL = math.pow(2, 8)
@@ -185,7 +192,7 @@ def Controller_Input(): #Controls Map for standard xbox controller
             user_input[3] = 0
         else:
             user_input[3] = user_input[3]+(joy.read()[6]*throttleCtrlFactor-joy.read()[4]*throttleCtrlFactor)       
-
+'''
 
 ## STL Formatting
 northOffset = 0                     # Translational offsets
@@ -263,13 +270,13 @@ axis3 = FlightSimWindow.add_subplot(2,4,4)
 
 Draw_Plane_STL(states, FlightSimWindow, user_input[3])
 
-#Start Listening for Controller Input
-Controller_Type='XBox' #Options are 'XBox' or 'Yoke'
-if Controller_Type=='XBox':
-    ControllerThread=threading.Thread(target=Controller_Input)
-#elif Controller_Type=='Yoke':
-    #ControllerThread=threading.Thread(target=Controller_Input_Yoke)
-ControllerThread.start()
+# #Start Listening for Controller Input
+# Controller_Type='XBox' #Options are 'XBox' or 'Yoke'
+# if Controller_Type=='XBox':
+#     ControllerThread=threading.Thread(target=Controller_Input)
+# #elif Controller_Type=='Yoke':
+#     #ControllerThread=threading.Thread(target=Controller_Input_Yoke)
+# ControllerThread.start()
 
 
 
@@ -277,13 +284,14 @@ ControllerThread.start()
 def update_plane(i):
     global t
     global states
-    global user_input
     global graph_data
     t=i*dt
     
-    states=integrate(states, dt, user_input, Va0)
+    x_trim, control_input = compute_trim(Va, Y, R)
 
-    Draw_Plane_STL(states, FlightSimWindow, user_input[3], [northOffset, eastOffset, downOffset])
+    states=integrate(states, dt, control_input)
+
+    Draw_Plane_STL(states, FlightSimWindow, control_input[3], [northOffset, eastOffset, downOffset])
 
     t_data=[t]
     t_data.extend(states)

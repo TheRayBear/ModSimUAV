@@ -73,7 +73,7 @@ gravity       = 9.806650
 mass          = 13.5
 
 
-def Forces_and_Moments(states, control_input, dt, Va0):
+def Forces_and_Moments(states, control_input, dt):
     #Unpack States
     pn=states[0]
     pe=states[1]
@@ -94,7 +94,7 @@ def Forces_and_Moments(states, control_input, dt, Va0):
     delta_r = control_input[2]
     delta_t = control_input[3]
 
-    Va, alpha, beta, Vw = air_data(states, dt, Va0)
+    Va, alpha, beta, Vw = air_data(states, dt)
 
     #Calculate simplifications for later
     ca=np.cos(alpha)
@@ -181,7 +181,7 @@ def EquationsOfMotion(t,states, Forces):
     xDot=[pnDot,peDot,pdDot,uDot,vDot,wDot,phiDot,thetaDot,psiDot,pDot,qDot,rDot]
     return(xDot)
 
-def integrate(states,dt,control_input,Va0):
+def integrate(states,dt,control_input):
     pn=states[0]
     pe=states[1]
     pd=states[2]
@@ -195,7 +195,7 @@ def integrate(states,dt,control_input,Va0):
     q=states[10]
     r=states[11]
     
-    fx, fy, fz, Mx, My, Mz = Forces_and_Moments(states, control_input, dt, Va0)
+    fx, fy, fz, Mx, My, Mz = Forces_and_Moments(states, control_input, dt)
     FandM = [fx, fy, fz, Mx, My, Mz]
 
     s = solve_ivp(lambda t, y: EquationsOfMotion(t, y, FandM), [0,dt], [pn, pe, pd, u, v, w, phi, theta, psi, p, q, r])
