@@ -159,9 +159,9 @@ def EquationsOfMotion(t,states, Forces):
     fx = Forces[0]
     fy = Forces[1]
     fz = Forces[2]
-    Mx = Forces[3]
-    My = Forces[4]
-    Mz = Forces[5]                                                                                                  
+    l = Forces[3]
+    m = Forces[4]
+    n = Forces[5]                                                                                                  
     
     R=rotMat_body2inertial(phi, theta, psi)
     [[pnDot], [peDot],[pdDot]] = np.matmul(R,[[u],[v],[w]])
@@ -174,9 +174,9 @@ def EquationsOfMotion(t,states, Forces):
     [[pDot], [qDot], [rDot]] = np.array([[Gamma_1*p*q-Gamma_2*q*r],
                                          [Gamma_5*p*r-Gamma_6*(p**2-r**2)],
                                          [Gamma_7*p*q-Gamma_1*q*r]])+\
-                               np.array([[Gamma_3*Mx+Gamma_4*Mz],
-                                         [My/Jy],
-                                         [Gamma_4*Mx+Gamma_8*Mz]])
+                               np.array([[Gamma_3*l+Gamma_4*n],
+                                         [m/Jy],
+                                         [Gamma_4*l+Gamma_8*n]])
     
     xDot=[pnDot,peDot,pdDot,uDot,vDot,wDot,phiDot,thetaDot,psiDot,pDot,qDot,rDot]
     return(xDot)

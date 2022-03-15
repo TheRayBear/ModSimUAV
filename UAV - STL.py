@@ -23,12 +23,12 @@ import threading
 from control.matlab import *
 from RotationalMatricies import *
 from Draw_Plots import *
-from Wind import *
+# from Wind import *
 from Dynamics import *
 from Trim_Conditions import *
 
 #Initial Conditions
-Va0=30 #Meters
+Va0=35 #Meters
 Initial_Altitude=600 #meters
 T = 20
 dt = 0.017
@@ -36,7 +36,7 @@ dt = 0.017
 #Desired Flight Conditions
 Va=35
 Y=0
-R=9999999999999
+R=200
 
 
 #Tables for Final Graphs
@@ -279,7 +279,12 @@ Draw_Plane_STL(states, FlightSimWindow, user_input[3])
 # ControllerThread.start()
 
 
+trim_states, trim_controls = compute_trim(Va, Y, R)
 
+trim_states[0]=states[0]
+trim_states[1]=states[1]
+trim_states[2]=states[2]
+states=trim_states
 
 def update_plane(i):
     global t
@@ -287,11 +292,9 @@ def update_plane(i):
     global graph_data
     t=i*dt
     
-    x_trim, control_input = compute_trim(Va, Y, R)
-
-    states=integrate(states, dt, control_input)
-
-    Draw_Plane_STL(states, FlightSimWindow, control_input[3], [northOffset, eastOffset, downOffset])
+    states=integrate(states, dt, trim_controls)
+    
+    Draw_Plane_STL(states, FlightSimWindow, trim_controls[3], [northOffset, eastOffset, downOffset])
 
     t_data=[t]
     t_data.extend(states)

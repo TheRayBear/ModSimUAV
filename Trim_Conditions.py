@@ -119,13 +119,6 @@ def compute_trim_states_input(x,Va,Y,R):
     # print(x_trim)
     return (x_trim, u_trim)
 
-def compute_trim(Va, Y, R): # this is the function that is called to compute trim
-    x0 = np.array([0,0,0])
-    res = sc.optimize.minimize(lambda x: compute_trim_cost(x,Va,Y,R), x0, method='nelder-mead',options={'xatol': 1e-8, 'disp': True})
-    x_trim, u_trim=compute_trim_states_input(res.x,Va,Y,R)
-    return (x_trim, u_trim)
-
-
 def compute_trim_cost(x,Va,Y,R):
   
   #inputs
@@ -163,10 +156,16 @@ def compute_trim_cost(x,Va,Y,R):
   
   #trimmed_inputs=np.array([d_e,d_t,d_a,d_r])
 
-  states_dot=EquationsOfMotion(0,x_trim,U) # 
+  states_dot=EquationsOfMotion(.1,x_trim,U) # 
   states_dot=np.array(states_dot)
   states_dot=states_dot.reshape(12,1)
   
   J=np.linalg.norm(x_dot-states_dot)**2
 
   return J
+
+def compute_trim(Va, Y, R): # this is the function that is called to compute trim
+    x0 = np.array([0,0,0])
+    res = sc.optimize.minimize(lambda x: compute_trim_cost(x,Va,Y,R), x0, method='nelder-mead',options={'xatol': 1e-8, 'disp': True})
+    x_trim, u_trim=compute_trim_states_input(res.x,Va,Y,R)
+    return (x_trim, u_trim)

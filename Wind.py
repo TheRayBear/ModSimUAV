@@ -68,7 +68,7 @@ def air_data(states, dt):
     theta=states[7]
     psi=states[8]
     Va0 = np.sqrt(u**2 + v**2 + w**2)
-    Vw=wind(phi, theta, psi, Va0, dt)
+    Vw=[0,0,0] #wind(phi, theta, psi, Va0, dt)
     Va_b=np.array([u-Vw[0], v-Vw[1], w-Vw[2]])
     Va=np.sqrt(Va_b[0]**2+Va_b[1]**2+Va_b[2]**2)
     alpha=np.arctan2(Va_b[2], Va_b[0])
