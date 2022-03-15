@@ -3,6 +3,7 @@ from stl import mesh
 from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt
 from RotationalMatricies import *
+from control.matlab import step
 
 # General Sim Settings
 stl_file_location='delorean.stl'
@@ -29,6 +30,26 @@ def PlotCharts(data, key):
         PlotWindow.tight_layout(pad=6)
         PlotWindow.suptitle('UAV State Graphs')
         PlotWindow.savefig('StatePlots.png')
+        plt.show()
+
+def PlotTFStepResponse(data, key):
+    data=np.array(data)
+    if len(data) != len(key):
+        print('Labels Not Correct, Check and try again')
+    else:
+        PlotWindow = plt.figure(figsize = (15, 15))
+        subplotHeight=int((data.shape[0])/2)
+        subplotWidth=2
+        for i in range(len(data)):
+            y_out, t = step(data[i]) 
+
+            ax=PlotWindow.add_subplot(subplotHeight, subplotWidth, i+1)
+            ax.plot(t,y_out)
+            ax.set_xlabel('Time (s)')
+            ax.set_ylabel(key[i])
+        PlotWindow.tight_layout(pad=6)
+        PlotWindow.suptitle('UAV Transfer Function Step Responses')
+        PlotWindow.savefig('TFPlots.png')
         plt.show()
 
 def Draw_Throttle_Pos(axis, throttle_pos):

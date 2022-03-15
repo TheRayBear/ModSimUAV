@@ -41,6 +41,7 @@ R=200
 
 #Tables for Final Graphs
 graph_data=[]
+tf_data=[]
 
 def Reset():
     global states
@@ -286,6 +287,8 @@ trim_states[1]=states[1]
 trim_states[2]=states[2]
 states=trim_states
 
+Trim_Transfer_Functions = compute_tf_models(states, trim_controls, Va0)
+
 def update_plane(i):
     global t
     global states
@@ -293,19 +296,22 @@ def update_plane(i):
     t=i*dt
     
     states=integrate(states, dt, trim_controls)
-    
+
+
     Draw_Plane_STL(states, FlightSimWindow, trim_controls[3], [northOffset, eastOffset, downOffset])
 
     t_data=[t]
     t_data.extend(states)
     graph_data.append(t_data)
-
     return (states)
 
 anim = animation.FuncAnimation(FlightSimWindow, update_plane, frames = int(t_step),  repeat=False) #interval=1,
 
 plt.show()
 
+
 PlotCharts(graph_data, ['Time (s)', 'n (m)', 'e (m)', 'd (m)', 'u (m/s)', 'v (m/s)', 'w (m/s)', 'phi (rad)', 'theta (rad)', 'psi (rad)', 'p (rad)', 'q (rad)', 'r (rad)'])
+
+PlotTFStepResponse(Trim_Transfer_Functions, ['T_phi_delta_a', 'T_chi_phi','T_theta_delta_e', 'T_h_theta',  'T_h_Va', 'T_Va_delta_t', 'T_Va_theta', 'T_beta_delta_r'])
 
 #print(graph_data)
