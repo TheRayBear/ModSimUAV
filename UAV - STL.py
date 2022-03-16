@@ -31,12 +31,12 @@ from Trim_Conditions import *
 Va0=35 #Meters
 Initial_Altitude=600 #meters
 T = 20
-dt = 0.017
+dt =  0.017
 
 #Desired Flight Conditions
-Va=35
-Y=0
-R=200
+Va=35 #40
+Y=0 #.2
+R=999999999999999
 
 
 #Tables for Final Graphs
@@ -268,6 +268,8 @@ FlightSimWindow = plt.figure(figsize = (15, 15))
 axis1 = FlightSimWindow.add_subplot(2,4,(1,6), projection = '3d')
 axis2 = FlightSimWindow.add_subplot(2,4,3, projection = 'polar')
 axis3 = FlightSimWindow.add_subplot(2,4,4)
+axis4 = FlightSimWindow.add_subplot(2,4,(7,8))
+
 
 Draw_Plane_STL(states, FlightSimWindow, user_input[3])
 

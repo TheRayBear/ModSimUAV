@@ -4,6 +4,7 @@ from mpl_toolkits import mplot3d
 import matplotlib.pyplot as plt
 from RotationalMatricies import *
 from control.matlab import step
+import matplotlib.patches as patches
 
 # General Sim Settings
 stl_file_location='delorean.stl'
@@ -65,8 +66,36 @@ def Draw_Altimeter(axis, altitude):
     axis.plot([0], [altitude], '*', color='red')
     axis.set_ylim((altitude-5,altitude+5))
 
-def Draw_Attitude():
-    print('There will be an attitude graph here... eventually')
+def Draw_Attitude(axis, states):
+    phi=states[6]
+    theta=states[7]
+    psi=states[8]
+
+    #Calculate Center Line Angle
+
+    X1 = np.cos(phi)
+    Y1 = np.sin(theta)-np.sin(phi)
+    
+    X0 = -np.cos(phi)
+    Y0 = np.sin(theta)+np.sin(phi)
+
+    X_center=0
+    Y_center=(Y0+Y1)/2
+    # background = patches.Rectangle((-1,-1),2,2, color='#a3cbef', fill=True)
+    # ground = patches.Rectangle((X0-1, Y0-1), 3, 2, angle=phi, color='brown')
+
+    axis.set_title('Attitude')
+    # axis.add_patch(background)
+    # axis.add_patch(ground)
+    axis.plot(([-1,1]),([0,0]), 'gray')
+    axis.plot(([X0,X1]),([Y0,Y1]), 'k')
+    axis.scatter(X_center, Y_center ,s=150, color='red')
+    axis.set_yticklabels([])
+    axis.set_xticklabels([])
+    axis.set_aspect('equal')
+    axis.set_xlim((-1,1))
+    axis.set_ylim((-1,1))
+
 
 def Draw_Plane_STL(states, figure, throttle_pos, offsets = [0,0,0]):
     
@@ -74,6 +103,7 @@ def Draw_Plane_STL(states, figure, throttle_pos, offsets = [0,0,0]):
     axis1=allaxis[0]
     axis2=allaxis[1]
     axis3=allaxis[2]
+    axis4=allaxis[3]
 
     #Unpack inputed variables
     northOffset = offsets[0]
@@ -82,8 +112,8 @@ def Draw_Plane_STL(states, figure, throttle_pos, offsets = [0,0,0]):
     pn=states[0]
     pe=states[1]
     pd=states[2]
-    phi=states[6]
-    theta=states[7]
+    phi=states[7]
+    theta=states[6]
     psi=states[8]
 
 
@@ -91,6 +121,7 @@ def Draw_Plane_STL(states, figure, throttle_pos, offsets = [0,0,0]):
     axis1.clear()
     axis2.clear()
     axis3.clear()
+    axis4.clear()
 
     R = rotMat_body2inertial_STL(phi, theta, psi)
 
@@ -110,7 +141,7 @@ def Draw_Plane_STL(states, figure, throttle_pos, offsets = [0,0,0]):
     #Plot Throttle Position and Altitude
     Draw_Throttle_Pos(axis2, throttle_pos)
     Draw_Altimeter(axis3, -plane_pos_z)
-
+    Draw_Attitude(axis4, states)
 
     # Create Mesh from STL File
     planeMesh = mesh.Mesh.from_file("delorean.stl") # Include STL file name here
