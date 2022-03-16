@@ -62,7 +62,7 @@ def Draw_Throttle_Pos(axis, throttle_pos):
     axis.set_aspect('equal')
 
 def Draw_Altimeter(axis, altitude):
-    axis.set_title('Atltitude')
+    axis.set_title('Altitude')
     axis.plot([0], [altitude], '*', color='red')
     axis.set_ylim((altitude-5,altitude+5))
 
