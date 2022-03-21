@@ -196,18 +196,18 @@ def compute_tf_models(x_trim, u_trim, Va):
     theta_trim = x_trim[7]
     #[d_e,d_t,d_a,d_r] u_trim
     #$ define transfer function constants
-    a_phi1   = -1/2*rho*Va**2*S*b*C_p_p * b/(2*Va)
-    a_phi2   = 1/2*rho*Va**2*S*b*C_p_delta_a
-    a_theta1 = -rho*Va**2*c*S/(2*Jy)*C_m_q*c/(2*Va)
-    a_theta2 = -rho*Va**2*c*S/(2*Jy)*C_m_alpha
-    a_theta3 = -rho*Va**2*c*S/(2*Jy)*C_m_delta_e
+    a_phi1   = -1/2*rho*Va**2*S_wing*b*C_p_p * b/(2*Va)
+    a_phi2   = 1/2*rho*Va**2*S_wing*b*C_p_delta_a
+    a_theta1 = -rho*Va**2*c*S_wing/(2*Jy)*C_m_q*c/(2*Va)
+    a_theta2 = -rho*Va**2*c*S_wing/(2*Jy)*C_m_alpha
+    a_theta3 = -rho*Va**2*c*S_wing/(2*Jy)*C_m_delta_e
    
-    a_V1     = rho*Va_trim*S/mass*(C_D_0+C_D_alpha*alpha_trim + C_D_delta_e*d_e)+rho*S_prop/mass*C_prop*Va_trim
+    a_V1     = rho*Va_trim*S_wing/mass*(C_D_0+C_D_alpha*alpha_trim + C_D_delta_e*d_e)+rho*S_prop/mass*C_prop*Va_trim
     a_V2     = rho*S_prop/mass*C_prop*k_motor**2*d_t
     a_V3     = gravity
     
-    a_beta1     = -rho*Va*S/(2*mass)*C_Y_beta
-    a_beta2     = rho*Va*S/(2*mass)*C_Y_delta_r
+    a_beta1     = -rho*Va*S_wing/(2*mass)*C_Y_beta
+    a_beta2     =  rho*Va*S_wing/(2*mass)*C_Y_delta_r
         
     # define transfer functions
     T_phi_delta_a   = tf([a_phi2],[1,a_phi1,0])
