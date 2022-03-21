@@ -1,4 +1,3 @@
-from re import S
 import numpy as np
 from RotationalMatricies import *
 from Wind import *
