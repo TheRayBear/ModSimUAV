@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 from RotationalMatricies import *
 from control.matlab import step
 import matplotlib.patches as patches
+from math import ceil
+# plt.rcParams['font.family']="heavyweight"
 
 # General Sim Settings
 stl_file_location='delorean.stl'
@@ -19,7 +21,7 @@ def PlotCharts(data, key):
         print('Labels Not Correct, Check and try again')
     else:
         PlotWindow = plt.figure(figsize = (15, 15))
-        subplotHeight=int((data.shape[1]-1)/2)
+        subplotHeight=ceil((data.shape[1]-1)/2)
         subplotWidth=2
         indexpos=np.concatenate((np.arange(0,data.shape[1]-1,2),np.arange(1, data.shape[1],2)))
         data=np.flipud(np.rot90(data, k=1, axes=(0,1)))
@@ -39,7 +41,7 @@ def PlotTFStepResponse(data, key):
         print('Labels Not Correct, Check and try again')
     else:
         PlotWindow = plt.figure(figsize = (15, 15))
-        subplotHeight=int((data.shape[0])/2)
+        subplotHeight=ceil((data.shape[0])/2)
         subplotWidth=2
         for i in range(len(data)):
             y_out, t = step(data[i]) 

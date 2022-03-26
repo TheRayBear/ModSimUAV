@@ -3,6 +3,7 @@ import scipy as sc
 from control.matlab import *
 from numpy import sin, cos
 from Dynamics import *
+from numpy import pi
 
 #Define Constants used for Functions
 
@@ -224,4 +225,13 @@ def compute_tf_models(x_trim, u_trim, Va):
     print('T_h_theta=', T_h_theta)
     print('T_beta_delta_r =', T_beta_delta_r)
     print('T_phi_delta_a=', T_phi_delta_a)
-    return([T_phi_delta_a, T_chi_phi, T_theta_delta_e, T_h_theta,  T_h_Va, T_Va_delta_t, T_Va_theta, T_beta_delta_r])
+
+    delta_a_max = 0.5
+    error_phi_max = pi/6
+    zeta_phi = .7
+    kp_phi=delta_a_max/error_phi_max
+    omega_n_phi=np.sqrt(kp_phi*a_phi2)
+    kd_phi = (2*zeta_phi*omega_n_phi-a_phi1)/a_phi2
+    T_phic_phi=tf([0,0,kp_phi*a_phi2],[1,a_phi1+kd_phi*a_phi2,kp_phi*a_phi2])
+
+    return([T_phi_delta_a, T_chi_phi, T_theta_delta_e, T_h_theta,  T_h_Va, T_Va_delta_t, T_Va_theta, T_beta_delta_r,T_phic_phi],kp_phi,kd_phi)

@@ -26,6 +26,7 @@ from Draw_Plots import *
 # from Wind import *
 from Dynamics import *
 from Trim_Conditions import *
+from AutoPilot import *
 
 #Initial Conditions
 Va0=35 #Meters
@@ -36,6 +37,7 @@ dt =  0.017
 #Desired Flight Conditions
 Va=35 #40
 Y=0 #.2
+# R=200
 R=999999999999999
 
 
@@ -289,7 +291,9 @@ trim_states[1]=states[1]
 trim_states[2]=states[2]
 states=trim_states
 
-Trim_Transfer_Functions = compute_tf_models(states, trim_controls, Va0)
+Trim_Transfer_Functions, kp_phi, kd_phi = compute_tf_models(states, trim_controls, Va0)
+
+phi_input=-10*np.pi/180
 
 def update_plane(i):
     global t
@@ -297,6 +301,8 @@ def update_plane(i):
     global graph_data
     t=i*dt
     
+    trim_controls[1]=rho_PID_loop(phi_input, states, kp_phi, kd_phi)
+
     states=integrate(states, dt, trim_controls)
 
 
@@ -314,6 +320,6 @@ plt.show()
 
 PlotCharts(graph_data, ['Time (s)', 'n (m)', 'e (m)', 'd (m)', 'u (m/s)', 'v (m/s)', 'w (m/s)', 'phi (rad)', 'theta (rad)', 'psi (rad)', 'p (rad)', 'q (rad)', 'r (rad)'])
 
-PlotTFStepResponse(Trim_Transfer_Functions, ['T_phi_delta_a', 'T_chi_phi','T_theta_delta_e', 'T_h_theta',  'T_h_Va', 'T_Va_delta_t', 'T_Va_theta', 'T_beta_delta_r'])
+PlotTFStepResponse(Trim_Transfer_Functions, ['T_phi_delta_a', 'T_chi_phi','T_theta_delta_e', 'T_h_theta',  'T_h_Va', 'T_Va_delta_t', 'T_Va_theta', 'T_beta_delta_r','T_phic_phi'])
 
-#print(graph_data)
+print(graph_data)
