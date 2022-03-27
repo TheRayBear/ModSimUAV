@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from RotationalMatricies import *
 from control.matlab import step
 import matplotlib.patches as patches
-from math import ceil
+from math import ceil, floor
 # plt.rcParams['font.family']="heavyweight"
 
 # General Sim Settings
@@ -68,6 +68,18 @@ def Draw_Altimeter(axis, altitude):
     axis.plot([0], [altitude], '*', color='red')
     axis.set_ylim((altitude-5,altitude+5))
 
+def Draw_Compass(axis, heading):
+    axis.set_title('Heading')
+    heading_degrees=heading*180/np.pi
+    heading_degrees_corrected=heading_degrees-floor(heading_degrees/360)*360
+    axis.plot(heading_degrees_corrected, [0], 'v')
+    axis.set_xlim((heading_degrees_corrected-10, heading_degrees_corrected+10))
+    axis.annotate('N', (  0, 0))
+    axis.annotate('E', ( 90, 0))
+    axis.annotate('S', (180, 0))
+    axis.annotate('W', (270, 0))
+    axis.annotate('N', (360, 0))
+
 def Draw_Attitude(axis, states):
     phi=states[6]
     theta=states[7]
@@ -106,6 +118,7 @@ def Draw_Plane_STL(states, figure, throttle_pos, offsets = [0,0,0]):
     axis2=allaxis[1]
     axis3=allaxis[2]
     axis4=allaxis[3]
+    axis5=allaxis[4]
 
     #Unpack inputed variables
     northOffset = offsets[0]
@@ -124,8 +137,9 @@ def Draw_Plane_STL(states, figure, throttle_pos, offsets = [0,0,0]):
     axis2.clear()
     axis3.clear()
     axis4.clear()
+    axis5.clear()
 
-    R = rotMat_body2inertial_STL(phi, theta, psi)
+    R = rotMat_body2inertial_STL(-phi, theta, psi)
 
     plane_pos_x = (pe + eastOffset) #*simScaleFactor
     plane_pos_y = (pn + northOffset)#*simScaleFactor
@@ -144,6 +158,7 @@ def Draw_Plane_STL(states, figure, throttle_pos, offsets = [0,0,0]):
     Draw_Throttle_Pos(axis2, throttle_pos)
     Draw_Altimeter(axis3, -plane_pos_z)
     Draw_Attitude(axis4, states)
+    Draw_Compass(axis5, states[8])
 
     # Create Mesh from STL File
     planeMesh = mesh.Mesh.from_file("delorean.stl") # Include STL file name here
