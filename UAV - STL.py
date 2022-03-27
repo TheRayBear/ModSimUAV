@@ -28,10 +28,14 @@ from Dynamics import *
 from Trim_Conditions import *
 from AutoPilot import *
 
+import warnings
+warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning) 
+
 #Initial Conditions
-Va0=35 #Meters
-Initial_Altitude=600 #meters
-T = 20
+Va0=0 #Meters
+Initial_Altitude=0 #meters
+T = 50
+# dt=.05
 dt =  0.017
 
 #Desired Flight Conditions
@@ -270,8 +274,8 @@ FlightSimWindow = plt.figure(figsize = (15, 15))
 axis1 = FlightSimWindow.add_subplot(2,4,(1,6), projection = '3d')
 axis2 = FlightSimWindow.add_subplot(2,4,3, projection = 'polar')
 axis3 = FlightSimWindow.add_subplot(2,4,4)
-axis4 = FlightSimWindow.add_subplot(2,4,(7,8))
-
+axis4 = FlightSimWindow.add_subplot(2,4,7)
+axis5 = FlightSimWindow.add_subplot(2,4,8)
 
 Draw_Plane_STL(states, FlightSimWindow, user_input[3])
 
@@ -291,20 +295,22 @@ trim_states[1]=states[1]
 trim_states[2]=states[2]
 states=trim_states
 
-Trim_Transfer_Functions, kp_phi, kd_phi = compute_tf_models(states, trim_controls, Va0)
+Trim_Transfer_Functions = compute_tf_models(states, trim_controls)
 
-phi_input=-10*np.pi/180
+autopilot_commanded_states=[0, 600, 35]
+
+KpKdKi_Values=kPkDki_Calc(states, trim_controls)
 
 def update_plane(i):
     global t
     global states
     global graph_data
-    t=i*dt
-    
-    trim_controls[1]=rho_PID_loop(phi_input, states, kp_phi, kd_phi)
+    global autopilot_commanded_states
+    t=i*dt  
+
+    controls=AutoPilot(autopilot_commanded_states, states, trim_controls, KpKdKi_Values)
 
     states=integrate(states, dt, trim_controls)
-
 
     Draw_Plane_STL(states, FlightSimWindow, trim_controls[3], [northOffset, eastOffset, downOffset])
 
@@ -320,6 +326,6 @@ plt.show()
 
 PlotCharts(graph_data, ['Time (s)', 'n (m)', 'e (m)', 'd (m)', 'u (m/s)', 'v (m/s)', 'w (m/s)', 'phi (rad)', 'theta (rad)', 'psi (rad)', 'p (rad)', 'q (rad)', 'r (rad)'])
 
-PlotTFStepResponse(Trim_Transfer_Functions, ['T_phi_delta_a', 'T_chi_phi','T_theta_delta_e', 'T_h_theta',  'T_h_Va', 'T_Va_delta_t', 'T_Va_theta', 'T_beta_delta_r','T_phic_phi'])
+# PlotTFStepResponse(Trim_Transfer_Functions, ['T_phi_delta_a', 'T_chi_phi','T_theta_delta_e', 'T_h_theta',  'T_h_Va', 'T_Va_delta_t', 'T_Va_theta', 'T_beta_delta_r'])
 
-print(graph_data)
+# print(graph_data)
