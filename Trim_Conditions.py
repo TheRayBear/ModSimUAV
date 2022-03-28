@@ -42,9 +42,9 @@ def compute_trim_states_input(x,Va,Y,R):
     
     temp_3=np.matmul(temp_1,temp_2)
     
-    d_a=temp_3[0]
+    d_a=temp_3[0,0]
     
-    d_r=temp_3[1]
+    d_r=temp_3[1,0]
         
     u_trim=np.array([d_e,d_a,d_r,d_t])
     # print("Trimmed [a*,B*,phi*]:")
