@@ -139,7 +139,7 @@ def Draw_Plane_STL(states, figure, throttle_pos, offsets = [0,0,0]):
     axis4.clear()
     axis5.clear()
 
-    R = rotMat_body2inertial_STL(-phi, theta, psi)
+    R = rotMat_body2inertial_STL(phi, theta, psi)
 
     plane_pos_x = (pe + eastOffset) #*simScaleFactor
     plane_pos_y = (pn + northOffset)#*simScaleFactor

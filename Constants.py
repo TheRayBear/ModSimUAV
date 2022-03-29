@@ -84,34 +84,37 @@ C_r_delta_r = Gamma_4*C_l_delta_r + Gamma_8*C_n_delta_r
 
 # Autopilot Constants
 # - Roll (Phi)
-delta_a_max = .5      # Max Aileron Command
-error_phi_max = pi/6  # Max Phi Allowed
-zeta_phi = .7         # Natural Frequency for Roll
+delta_a_max = 45*pi/180 # .5      # Max Aileron Command
+phi_max = 15*pi/180 #pi/6  # Max Phi Allowed
+zeta_phi = .7 #.7         # Natural Frequency for Roll
 
 # - Course (X)
-zeta_x = .8           # Natural Frequency for Course
+zeta_x = .8 #1.79 #.8           # Natural Frequency for Course
 W_X = 15              # Seperation Parameter for calculating omega_X
 
 # - Sideslip (beta)
-zeta_beta = .707
+zeta_beta = .707 #1 # .86 #.707
 omega_n_beta=3
 delta_r_max=20*pi/180
 
 # - Pitch (Theta)
-delta_e_max = 45*pi/180
-error_theta_max = 30*pi/180
-zeta_theta = .8
+delta_e_max = 45*pi/180 # .5 # 45*pi/180
+theta_max = 30*pi/180
+zeta_theta = .8 # 2 #.8
 
 # - Altitude
-zeta_h=.82
+zeta_h= .82 #.92
 W_h=16
 
 # - Airspeed (Pitch)
-W_V2 = 13
-zeta_V2=.82
+W_V2 = 10
+zeta_V2= .82 #.92 # .82
 
 # - Airspeed (Throttle)
-zeta_V = .707
+zeta_V = .707 #.907 # .707
 omega_n_V = 3
 
-theta_takeoff=10
+theta_takeoff=10*pi/180
+
+Takeoff_Altitude=5 #Meters
+Altitude_Hold_Radius=5 #Meters

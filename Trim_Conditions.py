@@ -107,6 +107,7 @@ def compute_tf_coefficients(states_trim, control_input):
     Va_trim = np.sqrt(states_trim[3]**2 +states_trim[4]**2 +states_trim[5]**2)
     alpha_trim = np.arctan(states_trim[5]/states_trim[3])
     Va=Va_trim
+    theta_trim=states_trim[4]
     
     #[d_e,d_t,d_a,d_r] u_trim
     #$ define transfer function constants
@@ -122,7 +123,7 @@ def compute_tf_coefficients(states_trim, control_input):
 
     a_V1     = rho*Va_trim*S_wing/mass*(C_D_0+C_D_alpha*alpha_trim + C_D_delta_e*d_e)+rho*S_prop/mass*C_prop*Va_trim
     a_V2     = rho*S_prop/mass*C_prop*k_motor**2*d_t
-    a_V3     = gravity
+    a_V3     = gravity*np.cos(theta_trim - alpha_trim)
     
     return a_phi1, a_phi2, a_theta1, a_theta2, a_theta3, a_beta1, a_beta2, a_V1, a_V2, a_V3
 
