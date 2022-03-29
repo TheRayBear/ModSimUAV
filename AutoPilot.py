@@ -131,24 +131,25 @@ def AutoPilot(HeadAltAir, states, KpKiKd_values, dt, trim_throttle, PID_Values):
     
     # SideSlip PID
     beta=np.arcsin(v/Va)
-    delta_r, PID_Values_beta = PID_Loop(0, beta, 0, [delta_r_max, -delta_r_max], PID_Values_beta, KpKiKd_beta, dt)
+    # delta_r, PID_Values_beta = PID_Loop(0, beta, 0, [delta_r_max, -delta_r_max], PID_Values_beta, KpKiKd_beta, dt)
 
-    # #Longitudinal State Controller
-    # if Altitude<=Takeoff_Altitude: # Takeoff
-    #     delta_t=1
-    #     theta_commanded=theta_takeoff
-    # elif Altitude<Altitude_Commanded-Altitude_Hold_Radius and Altitude>Takeoff_Altitude:
-    #     delta_t=1
-    #     theta_commanded, PID_Values_V2 = PID_Loop(Airspeed_Commanded, Va, 0, [theta_max, -theta_max], PID_Values_V2, KpKiKd_V2,dt)
-    # elif Altitude>=Altitude_Commanded-Altitude_Hold_Radius and Altitude<=Altitude_Commanded+Altitude_Hold_Radius:
-    #     delta_t, PID_Values_V = PID_Loop(Airspeed_Commanded, Va, 0, [1,0], PID_Values_V, KpKiKd_V, dt)
-    #     delta_t=delta_t+trim_throttle
-    #     theta_commanded, PID_Values_h  = PID_Loop(Altitude_Commanded, Altitude, 0, [theta_max, -theta_max], PID_Values_h, KpKiKd_h, dt)
-    # elif Altitude>Altitude_Commanded + Altitude_Hold_Radius:
-    #     delta_t=0
-    #     theta_commanded, PID_Values_V2 = PID_Loop(Airspeed_Commanded, Va, 0, [theta_max, -theta_max], PID_Values_V2, KpKiKd_V2,dt)
+    #Longitudinal State Controller
+    if Altitude<=Takeoff_Altitude: # Takeoff
+        delta_t=1
+        theta_commanded=theta_takeoff
+    elif Altitude<Altitude_Commanded-Altitude_Hold_Radius and Altitude>Takeoff_Altitude:
+        delta_t=1
+        theta_commanded, PID_Values_V2 = PID_Loop(Airspeed_Commanded, Va, 0, [theta_max, -theta_max], PID_Values_V2, KpKiKd_V2,dt)
+    elif Altitude>=Altitude_Commanded-Altitude_Hold_Radius and Altitude<=Altitude_Commanded+Altitude_Hold_Radius:
+        delta_t, PID_Values_V = PID_Loop(Airspeed_Commanded, Va, 0, [1,0], PID_Values_V, KpKiKd_V, dt)
+        delta_t=delta_t+trim_throttle
+        theta_commanded, PID_Values_h  = PID_Loop(Altitude_Commanded, Altitude, 0, [theta_max, -theta_max], PID_Values_h, KpKiKd_h, dt)
+        # PID_Values_V2=[0,0,0]
+    elif Altitude>Altitude_Commanded + Altitude_Hold_Radius:
+        delta_t=0
+        theta_commanded, PID_Values_V2 = PID_Loop(Airspeed_Commanded, Va, 0, [theta_max, -theta_max], PID_Values_V2, KpKiKd_V2,dt)
 
-    # delta_e, PID_Values_theta = PID_Loop(theta_commanded, theta, -q, [delta_e_max, -delta_e_max], PID_Values_theta, KpKiKd_theta, dt)
+    delta_e, PID_Values_theta = PID_Loop(theta_commanded, theta, -q, [delta_e_max, -delta_e_max], PID_Values_theta, KpKiKd_theta, dt)
     
     PID_Values[0:3]   = PID_Values_phi
     PID_Values[3:6]   = PID_Values_chi
@@ -158,8 +159,8 @@ def AutoPilot(HeadAltAir, states, KpKiKd_values, dt, trim_throttle, PID_Values):
     PID_Values[15:18] = PID_Values_V2
     PID_Values[18:21] = PID_Values_V
 
-    delta_e=0
-    delta_t=0
+    delta_r=0
+    # delta_t=0
 
     return [-delta_e, delta_a, delta_r, delta_t], PID_Values
 

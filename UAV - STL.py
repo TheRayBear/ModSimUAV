@@ -301,12 +301,21 @@ states=list(trim_states)
 
 # Trim_Transfer_Functions = compute_tf_models(states, trim_controls)
 
-autopilot_commanded_states=[45, 20, 35]
+autopilot_commanded_states=[0, 20, 35]
 
 AP_TFs, AP_TF_Names = AutoPilot_transfer_functions(states, trim_controls, KpKiKd_Values)
 
 PID_Values=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 
+def Commander():
+    global autopilot_commanded_states
+    while True:
+        new_heading=float(input('Heading:'))
+        new_altitude=float(input('Altitude:'))
+        new_airspeed=float(input('Airspeed:'))
+        autopilot_commanded_states=[new_heading, new_altitude, new_airspeed]
+FlightCommander=threading.Thread(target=Commander)
+FlightCommander.start()
 def update_plane(i):
     global t
     global states
@@ -315,12 +324,9 @@ def update_plane(i):
     global PID_Values
     t=i*dt  
     
-
-    controls, PID_Values = AutoPilot(autopilot_commanded_states, states, KpKiKd_Values, dt, trim_controls[3], PID_Values)
-
-    controls[0]=trim_controls[0]
-    controls[3]=trim_controls[3]
-
+    controls, PID_Values = AutoPilot(autopilot_commanded_states, states, KpKiKd_Values, dt, trim_controls[3], PID_Values)    
+    
+    controls[2]=trim_controls[2]
     states=integrate(states, dt, controls)
 
     Draw_Plane_STL(states, FlightSimWindow, controls[3], [northOffset, eastOffset, downOffset])
