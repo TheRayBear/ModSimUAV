@@ -89,11 +89,11 @@ C_r_delta_r = Gamma_4*C_l_delta_r + Gamma_8*C_n_delta_r
 # - Roll (Phi)
 delta_a_max = 45*pi/180 # .5      # Max Aileron Command
 phi_max = 30*pi/180 #pi/6  # Max Phi Allowed
-zeta_phi =.7         # Natural Frequency for Roll
+zeta_phi =.707         # Natural Frequency for Roll
 
 # - Course (X)
 zeta_x = .7       # Natural Frequency for Course
-W_X = 10              # Seperation Parameter for calculating omega_X
+W_X = 20 #10              # Seperation Parameter for calculating omega_X
 
 # - Sideslip (beta)
 zeta_beta = .707 #1 # .86 #.707

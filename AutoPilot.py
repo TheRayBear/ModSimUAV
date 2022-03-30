@@ -10,14 +10,15 @@ def kPkDki_Calc(states, control_input):
     #Calculate Kp, omega_n, and Kd for phi (roll)
     kp_phi=delta_a_max/phi_max
     omega_n_phi=np.sqrt(kp_phi*a_phi2)
+    # kp_phi=omega_n_phi**2/a_phi2
     kd_phi = (2*zeta_phi*omega_n_phi-a_phi1)/a_phi2
     ki_phi=0
 
     # Calculate Kp, and Ki for Chi
     Vg=np.sqrt(states[3]**2+states[4]**2+states[5]**2)
     omega_n_x = omega_n_phi/W_X
-    kp_x = 8*(2*zeta_x*omega_n_x*Vg/gravity)
-    ki_x = omega_n_x**2*Vg/gravity
+    kp_x = 2*zeta_x*omega_n_x*Vg/gravity
+    ki_x = omega_n_x**2*Vg/gravity/2
     kd_x=0
 
     # Calculate Kp, and Kd for theta (pitch)
@@ -112,7 +113,7 @@ def AutoPilot(HeadAltAir, states, KpKiKd_values, dt, trim_throttle, PID_Values):
     q=states[10]
     r=states[11]
 
-    print(psi*180/np.pi)
+    # print(psi*180/np.pi)
 
     Va=np.sqrt(u**2+v**2+w**2)
     Altitude=-pd
@@ -135,7 +136,7 @@ def AutoPilot(HeadAltAir, states, KpKiKd_values, dt, trim_throttle, PID_Values):
     
     # SideSlip PID
     beta=np.arcsin(v/Va)
-    # delta_r, PID_Values_beta = PID_Loop(0, beta, 0, [delta_r_max, -delta_r_max], PID_Values_beta, KpKiKd_beta, dt)
+    delta_r, PID_Values_beta = PID_Loop(0, beta, 0, [delta_r_max, -delta_r_max], PID_Values_beta, KpKiKd_beta, dt)
 
     #Longitudinal State Controller
     if Altitude<=Takeoff_Altitude: # Takeoff
@@ -163,7 +164,7 @@ def AutoPilot(HeadAltAir, states, KpKiKd_values, dt, trim_throttle, PID_Values):
     PID_Values[15:18] = PID_Values_V2
     PID_Values[18:21] = PID_Values_V
 
-    delta_r=0
+    # delta_r=0
     # delta_t=0
 
     return [-delta_e, delta_a, delta_r, delta_t], PID_Values
