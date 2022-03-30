@@ -33,12 +33,12 @@ warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
 
 #Initial Conditions
 Va0=0 #Meters
-Initial_Altitude=20 #meters
+Initial_Altitude=0 #meters
 T = 50
 # dt=.05
 dt =  0.017
 
-#Desired Flight Conditions
+#Initial Trim Conditions
 Va=35 #40
 Y=0 #.2
 # R=400
@@ -301,12 +301,13 @@ states=list(trim_states)
 
 # Trim_Transfer_Functions = compute_tf_models(states, trim_controls)
 
-autopilot_commanded_states=[15, 20, 35]
+autopilot_commanded_states=[0, 20, 35] # Initial Commanded States
 
 AP_TFs, AP_TF_Names = AutoPilot_transfer_functions(states, trim_controls, KpKiKd_Values)
 
 PID_Values=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
 
+# This takes command line inputs and sets inputs.
 def Commander():
     global autopilot_commanded_states
     while True:
