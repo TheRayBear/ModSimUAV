@@ -13,10 +13,10 @@ def kPkDki_Calc(states, control_input):
     kd_phi = (2*zeta_phi*omega_n_phi-a_phi1)/a_phi2
     ki_phi=0
 
-    # Calculate Kp, and Ki for X
+    # Calculate Kp, and Ki for Chi
     Vg=np.sqrt(states[3]**2+states[4]**2+states[5]**2)
     omega_n_x = omega_n_phi/W_X
-    kp_x = 2*zeta_x*omega_n_x*Vg/gravity
+    kp_x = 8*(2*zeta_x*omega_n_x*Vg/gravity)
     ki_x = omega_n_x**2*Vg/gravity
     kd_x=0
 
@@ -112,6 +112,8 @@ def AutoPilot(HeadAltAir, states, KpKiKd_values, dt, trim_throttle, PID_Values):
     q=states[10]
     r=states[11]
 
+    print(psi*180/np.pi)
+
     Va=np.sqrt(u**2+v**2+w**2)
     Altitude=-pd
 
@@ -124,7 +126,9 @@ def AutoPilot(HeadAltAir, states, KpKiKd_values, dt, trim_throttle, PID_Values):
     PID_Values_V     = PID_Values[18:21]
 
     #Course PID
-    phi_commanded, PID_Values_chi = PID_Loop(Heading_Commanded, psi, 0, [phi_max, -phi_max], PID_Values_chi, KpKiKd_chi, dt)
+    phi_commanded, PID_Values_chi = PID_Loop(Heading_Commanded, psi, r, [phi_max, -phi_max], PID_Values_chi, KpKiKd_chi, dt)
+    if np.abs(PID_Values_chi[0])>=15*np.pi/180:
+        PID_Values_chi[1]=0
 
     #Roll PID
     delta_a, PID_Values_phi = PID_Loop(phi_commanded, phi, -p, [delta_a_max, -delta_a_max], PID_Values_phi, KpKiKd_phi, dt)

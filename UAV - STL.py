@@ -33,7 +33,7 @@ warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
 
 #Initial Conditions
 Va0=0 #Meters
-Initial_Altitude=0 #meters
+Initial_Altitude=20 #meters
 T = 50
 # dt=.05
 dt =  0.017
@@ -301,7 +301,7 @@ states=list(trim_states)
 
 # Trim_Transfer_Functions = compute_tf_models(states, trim_controls)
 
-autopilot_commanded_states=[0, 20, 35]
+autopilot_commanded_states=[15, 20, 35]
 
 AP_TFs, AP_TF_Names = AutoPilot_transfer_functions(states, trim_controls, KpKiKd_Values)
 
@@ -316,6 +316,7 @@ def Commander():
         autopilot_commanded_states=[new_heading, new_altitude, new_airspeed]
 FlightCommander=threading.Thread(target=Commander)
 FlightCommander.start()
+
 def update_plane(i):
     global t
     global states
