@@ -26,16 +26,22 @@ from Draw_Plots import *
 # from Wind import *
 from Dynamics import *
 from Trim_Conditions import *
+from AutoPilot import *
+
+import warnings
+warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning) 
 
 #Initial Conditions
-Va0=35 #Meters
-Initial_Altitude=600 #meters
-T = 20
+Va0=0 #Meters
+Initial_Altitude=0 #meters
+T = 50
+# dt=.05
 dt =  0.017
 
-#Desired Flight Conditions
+#Initial Trim Conditions
 Va=35 #40
 Y=0 #.2
+# R=400
 R=999999999999999
 
 
@@ -268,11 +274,12 @@ FlightSimWindow = plt.figure(figsize = (15, 15))
 axis1 = FlightSimWindow.add_subplot(2,4,(1,6), projection = '3d')
 axis2 = FlightSimWindow.add_subplot(2,4,3, projection = 'polar')
 axis3 = FlightSimWindow.add_subplot(2,4,4)
-axis4 = FlightSimWindow.add_subplot(2,4,(7,8))
-
+axis4 = FlightSimWindow.add_subplot(2,4,7)
+axis5 = FlightSimWindow.add_subplot(2,4,8)
 
 Draw_Plane_STL(states, FlightSimWindow, user_input[3])
 
+'''
 # #Start Listening for Controller Input
 # Controller_Type='XBox' #Options are 'XBox' or 'Yoke'
 # if Controller_Type=='XBox':
@@ -280,27 +287,51 @@ Draw_Plane_STL(states, FlightSimWindow, user_input[3])
 # #elif Controller_Type=='Yoke':
 #     #ControllerThread=threading.Thread(target=Controller_Input_Yoke)
 # ControllerThread.start()
-
+'''
 
 trim_states, trim_controls = compute_trim(Va, Y, R)
+controls=list(trim_controls)
+
+KpKiKd_Values=kPkDki_Calc(trim_states, trim_controls)
 
 trim_states[0]=states[0]
 trim_states[1]=states[1]
 trim_states[2]=states[2]
-states=trim_states
+states=list(trim_states)
 
-Trim_Transfer_Functions = compute_tf_models(states, trim_controls, Va0)
+# Trim_Transfer_Functions = compute_tf_models(states, trim_controls)
+
+autopilot_commanded_states=[0, 20, 35] # Initial Commanded States
+
+AP_TFs, AP_TF_Names = AutoPilot_transfer_functions(states, trim_controls, KpKiKd_Values)
+
+PID_Values=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+
+# This takes command line inputs and sets inputs.
+def Commander():
+    global autopilot_commanded_states
+    while True:
+        new_heading=float(input('Heading:'))
+        new_altitude=float(input('Altitude:'))
+        new_airspeed=float(input('Airspeed:'))
+        autopilot_commanded_states=[new_heading, new_altitude, new_airspeed]
+FlightCommander=threading.Thread(target=Commander)
+FlightCommander.start()
 
 def update_plane(i):
     global t
     global states
     global graph_data
-    t=i*dt
+    global autopilot_commanded_states
+    global PID_Values
+    t=i*dt  
     
-    states=integrate(states, dt, trim_controls)
+    controls, PID_Values = AutoPilot(autopilot_commanded_states, states, KpKiKd_Values, dt, trim_controls[3], PID_Values)    
+    
+    controls[2]=trim_controls[2]
+    states=integrate(states, dt, controls)
 
-
-    Draw_Plane_STL(states, FlightSimWindow, trim_controls[3], [northOffset, eastOffset, downOffset])
+    Draw_Plane_STL(states, FlightSimWindow, controls[3], [northOffset, eastOffset, downOffset])
 
     t_data=[t]
     t_data.extend(states)
@@ -314,6 +345,6 @@ plt.show()
 
 PlotCharts(graph_data, ['Time (s)', 'n (m)', 'e (m)', 'd (m)', 'u (m/s)', 'v (m/s)', 'w (m/s)', 'phi (rad)', 'theta (rad)', 'psi (rad)', 'p (rad)', 'q (rad)', 'r (rad)'])
 
-PlotTFStepResponse(Trim_Transfer_Functions, ['T_phi_delta_a', 'T_chi_phi','T_theta_delta_e', 'T_h_theta',  'T_h_Va', 'T_Va_delta_t', 'T_Va_theta', 'T_beta_delta_r'])
+# PlotTFStepResponse(Trim_Transfer_Functions, ['T_phi_delta_a', 'T_chi_phi','T_theta_delta_e', 'T_h_theta',  'T_h_Va', 'T_Va_delta_t', 'T_Va_theta', 'T_beta_delta_r'])
 
-#print(graph_data)
+PlotTFStepResponse(AP_TFs, AP_TF_Names)
